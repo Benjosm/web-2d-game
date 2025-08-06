@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,11 @@
   "bugs": {
     "url": "https://github.com/Benjosm/web-2d-game/issues"
   },
-  "homepage": "https://github.com/Benjosm/web-2d-game#readme"
+  "homepage": "https://github.com/Benjosm/web-2d-game#readme",
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "canvas": "^3.1.2",
+    "jest": "^30.0.5",
+    "pixi.js": "^8.12.0"
+  }
 }
