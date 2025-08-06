@@ -1,0 +1,23 @@
+{
+  "name": "web-2d-game",
+  "version": "1.0.0",
+  "description": "## Table of Contents 1. [Project Overview](#project-overview)   2. [Features](#features)   3. [Technology Stack](#technology-stack)   4. [Repository Structure](#repository-structure)   5. [Getting Started](#getting-started)      - [Prerequisites](#prerequisites)      - [Installation & Development](#installation--development)      - [Running the Game](#running-the-game)   6. [Scripts & Commands](#scripts--commands)   7. [Testing](#testing)      - [Unit & Integration Tests](#unit--integration-tests)      - [End‑to‑End Tests](#end‑to‑end-tests)      - [Coverage Report](#coverage-report)   8. [Architecture & Design](#architecture--design)      - [Core Modules](#core-modules)      - [Data Persistence](#data-persistence)   9. [Asset Management](#asset-management)   10. [Deployment](#deployment)   11. [Contributing](#contributing)   12. [Versioning & Release Process](#versioning--release-process)   13. [License](#license)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Benjosm/web-2d-game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Benjosm/web-2d-game/issues"
+  },
+  "homepage": "https://github.com/Benjosm/web-2d-game#readme"
+}
