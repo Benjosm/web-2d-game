@@ -1,0 +1,142 @@
+# Project Plan: 2D Web Game
+
+## 1. User Needs Analysis
+**Target Audience**
+- Casual gamers accessing the game via modern web browsers (desktop & mobile).
+
+**Core Workflow & Pain Points**
+- Users want an immediate, no‑install experience: load the game URL and start playing.
+- Simple controls (keyboard for desktop, on‑screen touch controls for mobile).
+- Low latency and smooth 60 fps rendering.
+- Ability to pause, restart levels, and track high scores.
+- Optional sharing of scores on social media.
+
+**Feature Prioritization**
+1. **Playable core loop** – player can move, jump, interact, and complete a short level.
+2. **Responsive controls** – keyboard + touch UI.
+3. **Scoring & persistence** – local storage high‑score table.
+4. **Basic UI** – start menu, pause screen, level complete screen.
+5. **Graphics & Audio** – simple sprite‑sheet animation, background music, sound effects.
+6. **Optional** – social sharing, level editor, leaderboard server.
+
+**Usability & UX**
+- Clear visual feedback (animation, particle effects).
+- Minimal loading times; assets pre‑loaded.
+- Consistent UI layout across devices.
+- Accessibility: color‑blind friendly palette, configurable key bindings.
+
+## 2. Rapid Development Architecture
+**Technology Stack (speed‑first)**
+- **HTML5 + CSS3** – static page layout.
+- **JavaScript (ES2023)** – core game logic.
+- **PixiJS** – lightweight 2D rendering engine (canvas/WebGL fallback).
+- **Howler.js** – simple audio handling.
+- **LocalStorage API** – persistence of scores/settings.
+- **Parcel** (zero‑config bundler) – fast builds, hot reload for development.
+- **Jest** – unit & integration testing.
+- **Playwright** – user workflow (end‑to‑end) tests in headless Chromium.
+
+**Data Storage**
+- All game assets (sprites, audio) stored in `/assets`.
+- Game state and high scores saved in `localStorage` via a tiny wrapper module.
+
+**MVP Approach**
+- Iteration 0: Static page with canvas placeholder.
+- Iteration 1: Player sprite + movement & collision.
+- Iteration 2: Simple level layout (tiles), goal object, scoring.
+- Iteration 3: UI screens, pause/resume, high‑score persistence.
+- Iteration 4: Polish – animations, sounds, responsive touch controls.
+
+**Framework & Library Selections**
+- **PixiJS** for rapid sprite handling and physics‑free collision detection.
+- **Parcel** eliminates need for custom webpack config; supports hot module reload.
+- **Jest** provides fast unit-test execution; no external services required.
+- **Playwright** runs in the same headless Docker environment, satisfying workflow tests.
+
+## 3. Core Functionality Implementation
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| Game Loop | RequestAnimationFrame driven update/render cycle | ✅ |
+| Player Controller | Keyboard (← → ↑ space) & touch joystick/buttons | ✅ |
+| Tile‑based Level | Simple JSON map → collision grid | ✅ |
+| Goal & Scoring | Collectible object ends level, increments score | ✅ |
+| UI Screens | Start, pause, level complete, high‑score display | ✅ |
+| Asset Loader | Preload spritesheet, audio, show loading bar | ✅ |
+| Persistence | Save/retrieve high scores from localStorage | ✅ |
+| Audio System | Background music loop + SFX triggers | 🎯 (nice‑to‑have for first MVP) |
+| Responsive Design | CSS media queries & touch UI scaling | 🎯 |
+| Social Share | Share score via Web Share API | 🎯 (future) |
+| Level Editor | In‑browser editor for custom maps | 🎯 (future) |
+
+**Integration Points**
+- `src/renderer.js` (PixiJS canvas)
+- `src/input.js` (keyboard & touch)
+- `src/level.js` (loads JSON map)
+- `src/ui.js` (DOM overlays)
+- `src/storage.js` (localStorage wrapper)
+
+## 4. Test‑Driven Development Strategy
+
+### 4.1 Testing Hierarchy
+1. **Unit Tests – Simple Cases First**
+   - Pure functions: `collisionDetection`, `scoreCalculator`, `storage.getHighScore`.
+   - Player movement logic (velocity clamping, jump cooldown).
+2. **Integration Tests – Minimal Setup**
+   - Renderer creates Pixi Application with mocked canvas.
+   - Level loader parses JSON and builds collision grid.
+   - Storage module writes/reads from a temporary `localStorage` mock.
+3. **User Workflow Tests – Critical Paths Only**
+   - End‑to‑end: Load page → start game → complete level → high‑score appears.
+   - Pause/resume flow.
+   - Touch control path on simulated mobile viewport.
+
+### 4.2 Mocking Strategy
+- **Dependency Injection**: Modules receive `renderer`, `audio`, `storage` objects via constructor.
+- **Simple Stubs**: Fake `Audio` object that records `play` calls.
+- **System Boundary Mocks**: Mock `localStorage` using Jest's `jest.spyOn` on a fresh `window` object.
+- **File System**: Tests use in‑memory objects; no real file I/O.
+
+### 4.3 Testing Tools & Frameworks
+- **Jest** – test runner, assertion library, built‑in mocking.
+- **Playwright** – headless Chromium for workflow tests; runs inside container without extra services.
+- **Testing Patterns**
+  - `describe`/`it` blocks mirroring feature hierarchy.
+  - `beforeEach/afterEach` to reset mocks and DOM.
+  - Snapshot testing for rendered Pixi stage JSON (lightweight verification).
+
+### 4.4 Test Data Management
+- Level JSON fixtures stored in `test/fixtures/level1.json`.
+- Temporary `localStorage` cleared in `afterEach`.
+- Playwright creates a fresh browser context per test, ensuring isolation.
+
+## 5. Testability‑First Design Guidelines
+- **Composition over Inheritance**: Game objects composed of `position`, `velocity`, `sprite` components.
+- **SRP**: Separate `PhysicsEngine`, `InputHandler`, `RenderSystem`, `GameState`.
+- **Avoid Static Dependencies**: No global singletons; all modules export factory functions.
+- **Business Logic Isolation**: Collision, scoring, and state transitions live in pure modules.
+- **Local‑First**: All features work offline; no external APIs required.
+
+## 6. Development Workflow Optimization
+- **Iterative Development**: Feature branches per iteration, each with failing tests first.
+- **Fail Fast**: `npm test --watch` runs on file save; CI (within container) runs all suites on push.
+- **Success Criteria**
+  - Unit tests ≥ 80 % coverage.
+  - Integration tests pass on real Pixi canvas (headless mode).
+  - Workflow test completes level in < 5 seconds without errors.
+- **Debugging Support**
+  - Central logger (`src/logger.js`) routes to console with level control.
+  - Pixi's `renderer` exposes `stage` for inspection in dev tools.
+
+## 7. Deployment and Distribution
+- **Build Output**: `dist/` folder containing `index.html`, bundled `main.js`, assets.
+- **Local Installation**: Users open `index.html` directly or serve via any static server (`npx serve dist`).
+- **Simple Hosting**: GitHub Pages or Netlify – one‑click deployment from `dist`.
+- **Onboarding Docs**
+  - `README.md` with play instructions, controls list, and browser compatibility.
+  - In‑game tutorial overlay on first launch.
+- **Update Strategy**
+  - Versioned releases; cache‑busting via hash in bundled filename (handled by Parcel).
+  - Auto‑update prompt could be added later (service worker).
+
+---
+*Prepared by the AI Project Manager for rapid prototyping of a 2D web game.*  
