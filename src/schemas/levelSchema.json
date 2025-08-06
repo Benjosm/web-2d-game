@@ -1,0 +1,60 @@
+{
+"$schema": "http://json-schema.org/draft-07/schema#",
+"title": "Tile‑Based Level Schema",
+"type": "object",
+"required": ["width", "height", "tiles", "collision", "goal"],
+"properties": {
+  "width": {
+    "type": "integer",
+    "minimum": 1,
+    "description": "Number of tiles horizontally."
+  },
+  "height": {
+    "type": "integer",
+    "minimum": 1,
+    "description": "Number of tiles vertically."
+  },
+  "tiles": {
+    "type": "array",
+    "description": "2‑D array of tile IDs; outer array length must equal `height` and each inner array length must equal `width`.",
+    "items": {
+      "type": "array",
+      "minItems": { "$data": "1/width" },
+      "maxItems": { "$data": "1/width" },
+      "items": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "minItems": { "$data": "1/height" },
+    "maxItems": { "$data": "1/height" }
+  },
+  "collision": {
+    "type": "array",
+    "description": "List of tile IDs that are solid (block player movement).",
+    "items": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "uniqueItems": true
+  },
+  "goal": {
+    "type": "object",
+    "description": "Coordinates of the level’s goal tile.",
+    "required": ["x", "y"],
+    "properties": {
+      "x": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Goal X coordinate in tile units."
+      },
+      "y": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Goal Y coordinate in tile units."
+      }
+    }
+  }
+},
+"additionalProperties": false
+}
